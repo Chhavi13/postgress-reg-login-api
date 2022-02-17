@@ -5,9 +5,10 @@ const auth = require('../middleware/auth')
 const jwt = require('jsonwebtoken')
 const { Validator } = require('node-input-validator')
 const transporter = require('../utils/sendEmail')
-const dotenv = require('dotenv').config();
+require('dotenv').config();
 
 
+//console.log('HOST ------', process.env.AUTH)
 
 
 exports.register = async (req, res) => {
@@ -63,7 +64,7 @@ exports.register = async (req, res) => {
             // console.log("email",process.env.USER)
             console.log("password", process.env.PASS)
             const mailData = {
-                from: "chhavi.thoughtwin@gmail.com",
+                from: process.env.AUTH,
                 to: email,
                 subject: subject,
                 text: text,
@@ -113,14 +114,18 @@ exports.login = async (req, res) => {
         } else {
             if (bcrypt.compareSync(password, user.password)) {
                 const token = auth.generateAccessToken(email);
-
+                const refreshToken = auth.generateAccessRefreshToken(email)    
                 return res.status(200).send(
                     {
                         message: " login success ",
                         data: data,
-                        token: token
+                        token: token,
+                        refreshToken: refreshToken
 
                     });
+
+
+
             } else {
                 return res.status(400).json({
                     error: "invalid credintial."
@@ -308,10 +313,10 @@ exports.sendMailDemo = async (req, res) => {
     try {
         const { to, subject, text } = req.body;
         // console.log("to",to)
-        // console.log("email",process.env.USER)
+        console.log("User email", process.env.AUTH)
         console.log("password", process.env.PASS)
         const mailData = {
-            from: "chhavi.thoughtwin@gmail.com",
+            from: process.env.AUTH,
             to: to,
             subject: subject,
             text: text
@@ -334,3 +339,28 @@ exports.sendMailDemo = async (req, res) => {
     }
 
 }
+
+
+
+exports.refreshAccessToken = async (req, res) => {
+    try {
+        const email = req.user.data
+        console.log("requser",email)
+        const token = auth.generateAccessToken(email);
+        const refreshToken = auth.generateAccessRefreshToken(email)    
+        return res.status(200).send(
+            {
+                message: " success ",
+                data: email,
+                token: token,
+                refreshToken: refreshToken
+
+            });
+
+        
+    } catch (error) {
+        console.log(error)
+
+    }
+}
+

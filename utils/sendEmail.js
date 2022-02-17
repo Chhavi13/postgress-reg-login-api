@@ -1,5 +1,5 @@
 const nodemailer = require("nodemailer");
-const dotenv = require('dotenv').config();
+ require('dotenv').config();
 
 
 const transporter = nodemailer.createTransport({
@@ -8,11 +8,12 @@ const transporter = nodemailer.createTransport({
     port: 465,
     secure: false,
     auth: {
-        user: "chhavi.thoughtwin@gmail.com",
-        pass: "chhavi12345",
-    },
+        user:process.env.AUTH ,
+        pass:process.env.PASS
+    }
+    
 })
+   
 
-
-// console.log("transporter",transporter)
+//console.log("transporter",transporter)
 module.exports = transporter;

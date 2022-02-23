@@ -23,6 +23,7 @@ db.sequelize = sequelize
 db.users = require('./users.model')(sequelize, Sequelize)
 db.myclass = require('./class.model ')(sequelize,Sequelize)
 db.student = require('./students.model')(sequelize,Sequelize)
+db.teachers = require('./teachers.models')(sequelize,Sequelize)
 
 db.myclass.hasMany(db.student, { as: "studentsDetails" });
 db.student.belongsTo(db.myclass, {

@@ -1,23 +1,4 @@
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -27,13 +8,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserController = void 0;
-const users_models_1 = __importStar(require("../models/users.models"));
-const db_config_1 = __importDefault(require("../config/db.config"));
+const users_models_1 = require("../models/users.models");
+const bcrypt = require('bcryptjs');
 class UserController {
     constructor() {
         // private responseData: any
@@ -41,14 +19,21 @@ class UserController {
         this.userRegister = (req, res) => __awaiter(this, void 0, void 0, function* () {
             try {
                 console.log("req", req.body);
-                const { fullname, email, country } = req.body;
+                const { username, email, password } = req.body;
+                console.log("userEmail============", email);
+                const person = yield users_models_1.User.findOne();
+                console.log("preson found++++++++++++++++++++++", person);
+                if (person) {
+                    return res.status(400).json({
+                        error: "Email already there, No need to register again.",
+                    });
+                }
                 const userData = {
-                    fullname: fullname,
+                    username: username,
                     email: email,
-                    country: country
+                    password: bcrypt.hashSync(password, 8),
                 };
-                (0, users_models_1.UserMap)(db_config_1.default);
-                const result = yield users_models_1.default.create(userData);
+                const result = yield users_models_1.User.create(userData);
                 console.log(".............................", result);
                 res.status(201).json({ user: result });
             }

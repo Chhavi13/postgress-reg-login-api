@@ -2,8 +2,8 @@
 //import bodyParser from "body-parser";
 import express,{Request,Response} from "express";
 import { default as router } from "./src/routers/users.routes";
-import User,{UserMap} from './src/models/users.models'
-import config from  './src/config/db.config';
+import { User } from './src/models/users.models'
+import { sequelize } from  './src/config/db.config';
 
 const bodyParser = require("body-parser");
 const app = express();
